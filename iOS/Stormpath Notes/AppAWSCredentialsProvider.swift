@@ -46,7 +46,7 @@ class AppAWSCredentialsProvider: NSObject, AWSCredentialsProvider {
     func authenticate(accessToken: String) -> AWSTask<AnyObject> {
         let lambdaInvoker = AWSLambdaInvoker.default()
         
-        return lambdaInvoker.invokeFunction("stormpath-authorizer", jsonObject: ["authorizationToken": accessToken]).continueWith { (task) -> Any? in
+        return lambdaInvoker.invokeFunction("stormpath-authorizer", jsonObject: ["accessToken": accessToken]).continueWith { (task) -> Any? in
             if let credentialsJSON = (task.result as? [String: Any])?["Credentials"] {
                 self.authenticatedCredentials = AWSCredentials(json: credentialsJSON)
             }
