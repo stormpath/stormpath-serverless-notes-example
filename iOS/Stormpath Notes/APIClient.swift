@@ -20,26 +20,26 @@ class APIClient {
      Login to Stormpath
      */
     static func login(username: String, password: String, callback: APIClientCallback?) {
-        Stormpath.sharedSession.login(username: username, password: password) { (success, error) in
-            guard success else {
+Stormpath.sharedSession.login(username: username, password: password) { (success, error) in
+    guard success else {
+        callback?(error)
+        return
+    }
+    // Get the AWS Credentials Provider
+    let credentialsProvider = AWSServiceManager.default().defaultServiceConfiguration.credentialsProvider as? AppAWSCredentialsProvider
+    
+    // Allow the AWS Credentials Provider to authenticate with the Stormpath access token & get a user-scoped access token.
+    credentialsProvider?.authenticate(accessToken: Stormpath.sharedSession.accessToken!).continueWith { (task) -> Any? in
+        // Populate user fields
+        Stormpath.sharedSession.me { account, error in
+            self.account = account
+            DispatchQueue.main.async {
                 callback?(error)
-                return
-            }
-            // Get the AWS Credentials Provider
-            let credentialsProvider = AWSServiceManager.default().defaultServiceConfiguration.credentialsProvider as? AppAWSCredentialsProvider
-            
-            // Allow the AWS Credentials Provider to authenticate with the Stormpath access token & get a user-scoped access token.
-            credentialsProvider?.authenticate(accessToken: Stormpath.sharedSession.accessToken!).continueWith { (task) -> Any? in
-                // Populate user fields
-                Stormpath.sharedSession.me { account, error in
-                    self.account = account
-                    DispatchQueue.main.async {
-                        callback?(error)
-                    }
-                }
-                return nil
             }
         }
+        return nil
+    }
+}
     }
     
     // Register a user
@@ -56,19 +56,19 @@ class APIClient {
             return
         }
         
-        // Query DynamoDB for a note with the user's href as the primary key
-        AWSDynamoDBObjectMapper.default().load(Note.self, hashKey: account.href.absoluteString, rangeKey: nil)
-            .continueWith { task -> Any? in
-                
-            let dynamoNote = task.result as? Note
-            self.notes = dynamoNote?.text ?? "This is your notebook. Edit this to start saving your notes!"
-            
-            DispatchQueue.main.async {
-                callback?(nil)
-            }
-            
-            return nil
-        }
+// Query DynamoDB for a note with the user's href as the primary key
+AWSDynamoDBObjectMapper.default().load(Note.self, hashKey: account.href.absoluteString, rangeKey: nil)
+    .continueWith { task -> Any? in
+        
+    let dynamoNote = task.result as? Note
+    self.notes = dynamoNote?.text ?? "This is your notebook. Edit this to start saving your notes!"
+    
+    DispatchQueue.main.async {
+        callback?(nil)
+    }
+    
+    return nil
+}
     }
     // Save notes for the current user
     static func saveNote(callback: APIClientCallback?) {
@@ -77,12 +77,12 @@ class APIClient {
             return
         }
         
-        // Create the DynamoDB model
-        let note = Note()!
-        note.accountHref = account.href.absoluteString
-        note.text = notes
-        
-        // Save to DynamoDB
-        AWSDynamoDBObjectMapper.default().save(note)
+// Create the DynamoDB model
+let note = Note()!
+note.accountHref = account.href.absoluteString
+note.text = notes
+
+// Save to DynamoDB
+AWSDynamoDBObjectMapper.default().save(note)
     }
 }

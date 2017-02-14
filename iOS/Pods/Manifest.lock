@@ -1,33 +1,22 @@
 PODS:
-  - AWSCognito (2.5.0):
-    - AWSCore (= 2.5.0)
   - AWSCore (2.5.0)
   - AWSDynamoDB (2.5.0):
     - AWSCore (= 2.5.0)
   - AWSLambda (2.5.0):
     - AWSCore (= 2.5.0)
-  - AWSS3 (2.5.0):
-    - AWSCore (= 2.5.0)
   - Stormpath (3.0.1)
-  - SwiftyJSON (3.1.4)
 
 DEPENDENCIES:
-  - AWSCognito
-  - AWSDynamoDB
-  - AWSLambda
-  - AWSS3
-  - Stormpath
-  - SwiftyJSON
+  - AWSDynamoDB (~> 2.5)
+  - AWSLambda (~> 2.5)
+  - Stormpath (~> 3.0)
 
 SPEC CHECKSUMS:
-  AWSCognito: 5a1af0c4b351de1ec8d523d3ed0aecce42dd630e
   AWSCore: e9839d27ceaa2db75934a9c418630ce63c23e347
   AWSDynamoDB: 81b3523f113dacf53c071965662b7056ad866709
   AWSLambda: e191f87a47d2f7916090e4b18f6099388054a75a
-  AWSS3: 3678dd99006ff77c825fb857fc7cbaca0db848c6
   Stormpath: 611ada2806a55db28b8fc1a069198d19295ec38f
-  SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
 
-PODFILE CHECKSUM: 9dfc11f1da7a4a90bf96b0917a210de8dfc0db4a
+PODFILE CHECKSUM: b71951eb6318b90f81084f42d7c06652d914714a
 
 COCOAPODS: 1.2.0
